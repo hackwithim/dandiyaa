@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "api/*.py": {
+      "includeFiles": "{templates/**,static/**,database.json,Sheet.xlsx}"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/index.py"
+    }
+  ]
+}
