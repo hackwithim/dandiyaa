@@ -1,4 +1,13 @@
 import os
+import sys
+
+# Ensure UTF-8 output encoding on Windows consoles
+if sys.stdout.encoding != 'utf-8':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
 import shutil
 import csv
 import io
@@ -582,7 +591,7 @@ def change_password():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     print(f"==================================================")
-    print(f"🪘 RAAS DANDIYA & GARBA NIGHT 2026 ACCESS SERVER")
+    print(f"*** RAAS DANDIYA & GARBA NIGHT 2026 ACCESS SERVER ***")
     print(f"Admin Email: {ADMIN_EMAIL}")
     print(f"Server running at: http://127.0.0.1:{port}")
     print(f"==================================================")
