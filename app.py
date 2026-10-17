@@ -112,6 +112,12 @@ def resolve_student_record(students_table, raw_input, preferred_college=None):
 @app.route('/api/')
 @app.route('/api/index.py')
 def index():
+    if request.args.get('debug'):
+        return jsonify({
+            'PATH_INFO': request.environ.get('PATH_INFO'),
+            'QUERY_STRING': request.environ.get('QUERY_STRING'),
+            'headers': {k: v for k, v in request.environ.items() if k.startswith('HTTP_') or 'PATH' in k or 'URI' in k}
+        })
     return render_template('index.html')
 
 @app.route('/api/login', methods=['POST'])
