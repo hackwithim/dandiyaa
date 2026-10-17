@@ -1,10 +1,19 @@
 import os
+import shutil
 import re
 import openpyxl
 from tinydb import TinyDB, Query
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, 'database.json')
+
+if os.environ.get('VERCEL'):
+    DB_PATH = '/tmp/database.json'
+    bundled_db = os.path.join(BASE_DIR, 'database.json')
+    if not os.path.exists(DB_PATH) and os.path.exists(bundled_db):
+        shutil.copy2(bundled_db, DB_PATH)
+else:
+    DB_PATH = os.path.join(BASE_DIR, 'database.json')
+
 SHEET_PATH = os.path.join(BASE_DIR, 'Sheet.xlsx')
 
 ADMIN_EMAIL = 'rccindia@webworksstudios.com'
