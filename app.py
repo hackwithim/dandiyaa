@@ -15,7 +15,7 @@ import re
 import threading
 import time
 from datetime import datetime
-from flask import Flask, render_template, request, jsonify, Response, send_file
+from flask import Flask, render_template, request, jsonify, Response, send_file, send_from_directory
 from tinydb import TinyDB, Query
 from db_loader import init_database, DB_PATH, BASE_DIR, ADMIN_EMAIL, ADMIN_PASS
 
@@ -113,6 +113,11 @@ def resolve_student_record(students_table, raw_input, preferred_college=None):
 @app.route('/api/index.py')
 def index():
     return render_template('index.html')
+
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory(os.path.join(BASE_DIR, 'static'), filename)
+
 
 @app.route('/api/login', methods=['POST'])
 def login():

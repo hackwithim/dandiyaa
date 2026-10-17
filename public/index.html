@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Raas Dandiya & Garba Night 2026 — Pass Scanner & Access Control</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- HTML5-QRCode Scanner Library -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="theme-festive">
+    <!-- Background Ambient Glow Orbs -->
+    <div class="ambient-glow orb-1"></div>
+    <div class="ambient-glow orb-2"></div>
+    <div class="ambient-glow orb-3"></div>
+
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="header-brand">
+                <div class="brand-symbol">
+                    <i class="fa-solid fa-drum"></i>
+                    <span class="sparkle-dot"></span>
+                </div>
+                <div class="brand-info">
+                    <div class="brand-title">
+                        <span class="gold-gradient">RAAS DANDIYA</span>
+                        <span class="year-badge">2026</span>
+                    </div>
+                    <div class="brand-sub">Dr. D. Y. Patil Varale Campus • Access Portal</div>
+                </div>
+            </div>
+
+            <div class="header-controls">
+                <div id="liveStatusPill" class="status-pill online">
+                    <span class="pulse-dot"></span>
+                    <span class="pill-text">LIVE SCANNER</span>
+                </div>
+
+                <div id="userInfoPill" class="user-pill hidden">
+                    <span id="userRoleBadge" class="role-tag admin">ADMIN</span>
+                    <span id="userNameDisplay" class="user-display-name">rccindia@webworksstudios.com</span>
+                </div>
+
+                <nav class="nav-actions">
+                    <button id="navScannerBtn" class="nav-link active hidden" onclick="switchView('scanner')" title="Barcode Scanner">
+                        <i class="fa-solid fa-barcode"></i> <span>Scanner</span>
+                    </button>
+                    <button id="navAnalyticsBtn" class="nav-link hidden" onclick="switchView('analytics')" title="Live Analytics">
+                        <i class="fa-solid fa-chart-pie"></i> <span>Analytics</span>
+                    </button>
+                    <button id="navDirectoryBtn" class="nav-link hidden" onclick="switchView('directory')" title="Attendee Directory">
+                        <i class="fa-solid fa-users-viewfinder"></i> <span>Directory</span>
+                    </button>
+                    <button id="navAdminBtn" class="nav-link hidden" onclick="switchView('admin')" title="Admin Controls">
+                        <i class="fa-solid fa-shield-halved"></i> <span>Admin</span>
+                    </button>
+                    <button id="navLogoutBtn" class="nav-link logout-link hidden" onclick="handleLogout()" title="Log Out">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="app-main">
+
+        <!-- ==================== VIEW 1: AUTHENTICATION ==================== -->
+        <section id="viewLogin" class="view-panel active">
+            <div class="login-container">
+                <div class="festive-card login-glass-card">
+                    <div class="card-ornament top-ornament">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+
+                    <div class="login-header">
+                        <div class="login-logo-circle">
+                            <i class="fa-solid fa-qrcode"></i>
+                        </div>
+                        <h2>Dandiya & Garba Night 2026</h2>
+                        <p class="login-subtitle">Secure High-Speed Access Verification System</p>
+                    </div>
+
+                    <!-- Role Switcher Tabs -->
+                    <div class="role-selector-tabs">
+                        <button type="button" class="role-tab active" id="tabAdmin" onclick="selectLoginRole('admin')">
+                            <i class="fa-solid fa-shield-cat"></i> Administrator
+                        </button>
+                        <button type="button" class="role-tab" id="tabVolunteer" onclick="selectLoginRole('volunteer')">
+                            <i class="fa-solid fa-torii-gate"></i> Gate Volunteer
+                        </button>
+                    </div>
+
+                    <form id="loginForm" onsubmit="submitLogin(event)">
+                        <!-- Admin Login Form -->
+                        <div id="adminLoginFields">
+                            <div class="input-block">
+                                <label for="adminEmailInput"><i class="fa-solid fa-envelope"></i> Administrator Email</label>
+                                <div class="input-wrap">
+                                    <input type="email" id="adminEmailInput" class="custom-input" autocomplete="username">
+                                </div>
+                            </div>
+                            <div class="input-block">
+                                <label for="adminPasswordInput"><i class="fa-solid fa-lock"></i> Master Password</label>
+                                <div class="input-wrap">
+                                    <input type="password" id="adminPasswordInput" class="custom-input" autocomplete="current-password">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Volunteer Login Form -->
+                        <div id="volunteerLoginFields" class="hidden">
+                            <div class="input-block">
+                                <label for="volunteerStationInput"><i class="fa-solid fa-door-open"></i> Gate Station / Username</label>
+                                <div class="input-wrap">
+                                    <input type="text" id="volunteerStationInput" class="custom-input">
+                                </div>
+                            </div>
+                            <div class="input-block">
+                                <label for="volunteerPasswordInput"><i class="fa-solid fa-key"></i> Gate Passcode</label>
+                                <div class="input-wrap">
+                                    <input type="password" id="volunteerPasswordInput" class="custom-input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="loginFeedback" class="login-feedback hidden"></div>
+
+                        <button type="submit" id="loginSubmitBtn" class="primary-btn glow-btn btn-block">
+                            <span>Authenticate & Open Portal</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </form>
+
+                    <div class="login-footer">
+                        <span><i class="fa-solid fa-lock"></i> 256-Bit Atomic Verification • Dr. D. Y. Patil Campus</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 2: SCANNER ==================== -->
+        <section id="viewScanner" class="view-panel">
+            <div class="scanner-layout">
+                <!-- Left: Scanner Viewfinder & Gun Input -->
+                <div class="scanner-left-col">
+                    <div class="festive-card camera-card">
+                        <div class="card-title-bar">
+                            <div class="title-with-icon">
+                                <i class="fa-solid fa-camera-retro"></i>
+                                <span>Live Camera Optical Scanner</span>
+                            </div>
+                            <div class="camera-toolbar">
+                                <button id="torchToggleBtn" class="tool-btn hidden" onclick="toggleCameraTorch()" title="Toggle Flashlight">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </button>
+                                <button id="camFlipBtn" class="tool-btn" onclick="flipCamera()" title="Switch Camera">
+                                    <i class="fa-solid fa-camera-rotate"></i>
+                                </button>
+                                <button id="camStateBtn" class="tool-btn active" onclick="toggleCameraActive()" title="Pause/Play Camera">
+                                    <i class="fa-solid fa-video"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Camera Viewport with Custom Scanning Laser HUD -->
+                        <div class="viewport-wrapper">
+                            <div id="qrReader" class="camera-reader-viewport"></div>
+                            <div class="scanner-hud-overlay">
+                                <div class="hud-corner top-left"></div>
+                                <div class="hud-corner top-right"></div>
+                                <div class="hud-corner bottom-left"></div>
+                                <div class="hud-corner bottom-right"></div>
+                                <div class="laser-scanner-line"></div>
+                                <div class="scan-target-text">ALIGN BARCODE WITHIN FRAME</div>
+                            </div>
+                        </div>
+
+                        <!-- Camera Device Selector -->
+                        <div class="camera-footer-controls">
+                            <div class="select-wrap">
+                                <i class="fa-solid fa-video-slash select-icon"></i>
+                                <select id="cameraSelect" class="custom-select" onchange="onCameraSelected(this.value)">
+                                    <option value="">Detecting Cameras...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hardware Barcode Gun & Rapid Input Card -->
+                    <div class="festive-card gun-input-card">
+                        <div class="card-title-bar">
+                            <div class="title-with-icon">
+                                <i class="fa-solid fa-barcode"></i>
+                                <span>Hardware Barcode Gun / Manual Roll Search</span>
+                            </div>
+                            <span class="gun-live-badge"><i class="fa-solid fa-bolt"></i> HIGH-SPEED BUFFER</span>
+                        </div>
+
+                        <form id="barcodeInputForm" onsubmit="handleManualBarcodeSubmit(event)">
+                            <div class="rapid-input-wrap">
+                                <input type="text" id="barcodeInput" class="gun-input" placeholder="Scan Barcode or Type Student ID / Roll / Phone..." autofocus autocomplete="off">
+                                <button type="submit" class="gun-submit-btn" id="gunSubmitBtn" title="Verify Pass">
+                                    <i class="fa-solid fa-magnifying-glass-arrow-right"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <div class="input-hints">
+                            <span><i class="fa-solid fa-keyboard"></i> Auto-focused for USB / Bluetooth Laser Guns</span>
+                            <span class="shortcut-pill">Press Enter to Validate</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Live Result Card & Gate Activity Feed -->
+                <div class="scanner-right-col">
+                    <!-- Status Response Display Card -->
+                    <div id="scanResultCard" class="festive-card result-card empty">
+                        <div class="result-placeholder">
+                            <div class="pulse-ring">
+                                <i class="fa-solid fa-qrcode"></i>
+                            </div>
+                            <h3>Awaiting Pass Scan</h3>
+                            <p>Hold barcode to the camera or trigger hardware scanner gun</p>
+                            <div class="event-tag-pill">
+                                <i class="fa-solid fa-masks-theater"></i> Raas Dandiya & Garba Night 2026
+                            </div>
+                        </div>
+
+                        <!-- Dynamically populated verification result -->
+                        <div id="resultContent" class="result-content hidden"></div>
+                    </div>
+
+                    <!-- Mini Live Gate Feed -->
+                    <div class="festive-card mini-log-card">
+                        <div class="card-title-bar">
+                            <div class="title-with-icon">
+                                <i class="fa-solid fa-timeline"></i>
+                                <span>Recent Gate Activity (This Station)</span>
+                            </div>
+                            <button class="icon-refresh-btn" onclick="refreshStats()" title="Refresh Feed">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                        </div>
+                        <div class="mini-log-scroll" id="miniLogList">
+                            <div class="empty-log-state">No scans recorded at this station yet.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 3: LIVE ANALYTICS ==================== -->
+        <section id="viewAnalytics" class="view-panel">
+            <div class="analytics-layout">
+                <!-- Top 4 Summary Cards -->
+                <div class="metrics-grid">
+                    <div class="metric-card gold">
+                        <div class="metric-icon"><i class="fa-solid fa-users"></i></div>
+                        <div class="metric-content">
+                            <span class="metric-label">TOTAL REGISTERED</span>
+                            <span class="metric-number" id="statTotalAttendees">1,362</span>
+                            <span class="metric-sub">5 Colleges Combined</span>
+                        </div>
+                    </div>
+                    <div class="metric-card emerald">
+                        <div class="metric-icon"><i class="fa-solid fa-door-open"></i></div>
+                        <div class="metric-content">
+                            <span class="metric-label">CHECKED IN (ADMITTED)</span>
+                            <span class="metric-number" id="statAdmittedAttendees">0</span>
+                            <div class="progress-wrap">
+                                <div class="progress-bar-fill" id="statAdmittedProgress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-card ruby">
+                        <div class="metric-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                        <div class="metric-content">
+                            <span class="metric-label">PENDING CHECK-IN</span>
+                            <span class="metric-number" id="statPendingAttendees">1,362</span>
+                            <span class="metric-sub" id="statTurnoutRate">0.0% Turnout</span>
+                        </div>
+                    </div>
+                    <div class="metric-card sapphire">
+                        <div class="metric-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                        <div class="metric-content">
+                            <span class="metric-label">DUPLICATE ATTEMPTS BLOCKED</span>
+                            <span class="metric-number" id="statDuplicateDenied">0</span>
+                            <span class="metric-sub">Anti-Fraud Protection</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5 College Breakdown Cards -->
+                <div class="section-heading">
+                    <div class="title-with-icon">
+                        <i class="fa-solid fa-building-columns"></i>
+                        <span>College-Wise Attendance Breakdown</span>
+                    </div>
+                    <span class="heading-sub">Live synchronized access numbers across campus</span>
+                </div>
+
+                <div class="colleges-grid" id="collegesBreakdownGrid">
+                    <!-- Cards for DYPIMED, DYPCOEI, DYPTC, DYPSOA, BOX OFFICE rendered dynamically -->
+                </div>
+
+                <!-- Comprehensive Audit Log Feed -->
+                <div class="section-heading">
+                    <div class="title-with-icon">
+                        <i class="fa-solid fa-list-check"></i>
+                        <span>Centralized Gate Audit Log</span>
+                    </div>
+                    <div class="heading-actions">
+                        <button class="secondary-btn btn-sm" onclick="exportAttendanceCSV()">
+                            <i class="fa-solid fa-file-csv"></i> Export CSV
+                        </button>
+                        <button class="secondary-btn btn-sm" onclick="refreshStats()">
+                            <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div class="festive-card log-table-card">
+                    <div class="table-responsive">
+                        <table class="custom-table" id="auditTable">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Attendee Name</th>
+                                    <th>Barcode / ID</th>
+                                    <th>College</th>
+                                    <th>Time</th>
+                                    <th>Gate Station</th>
+                                    <th>Action Message</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auditTableBody">
+                                <tr>
+                                    <td colspan="7" class="loading-cell">Loading live audit records...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 4: ATTENDEE DIRECTORY ==================== -->
+        <section id="viewDirectory" class="view-panel">
+            <div class="directory-layout">
+                <div class="festive-card filter-card">
+                    <div class="filter-row">
+                        <div class="search-box-wrap">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <input type="text" id="dirSearchInput" class="search-input" placeholder="Instant Search: Name, Barcode, Roll No, Phone, Division..." oninput="debounceDirectorySearch()">
+                            <button type="button" class="clear-search-btn hidden" id="clearSearchBtn" onclick="clearDirectorySearch()">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+
+                        <div class="filter-controls">
+                            <div class="select-wrap">
+                                <select id="dirCollegeSelect" class="custom-select" onchange="loadDirectory()">
+                                    <option value="ALL">All 5 Colleges</option>
+                                    <option value="DYPIMED">DYPIMED</option>
+                                    <option value="DYPCOEI">DYPCOEI</option>
+                                    <option value="DYPTC">DYPTC</option>
+                                    <option value="DYPSOA">DYPSOA</option>
+                                    <option value="BOX OFFICE">BOX OFFICE</option>
+                                </select>
+                            </div>
+
+                            <div class="select-wrap">
+                                <select id="dirStatusSelect" class="custom-select" onchange="loadDirectory()">
+                                    <option value="ALL">All Statuses</option>
+                                    <option value="PENDING">Pending Only</option>
+                                    <option value="ENTERED">Admitted Only</option>
+                                </select>
+                            </div>
+
+                            <button class="primary-btn btn-sm" onclick="loadDirectory()">
+                                <i class="fa-solid fa-filter"></i> Apply
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Directory Results Table -->
+                <div class="festive-card directory-table-card">
+                    <div class="directory-meta-bar">
+                        <span id="directoryResultsCount">Showing 0 attendees</span>
+                        <span class="meta-tip"><i class="fa-solid fa-circle-info"></i> Click Manual Check-in to admit an attendee without barcode</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="custom-table" id="directoryTable">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Candidate Name</th>
+                                    <th>Barcode / Roll</th>
+                                    <th>College</th>
+                                    <th>Course / Div</th>
+                                    <th>Entry Timestamp</th>
+                                    <th>Verified By</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="directoryTableBody">
+                                <tr>
+                                    <td colspan="8" class="loading-cell">Loading directory attendees...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 5: ADMIN CONTROLS ==================== -->
+        <section id="viewAdmin" class="view-panel">
+            <div class="admin-layout">
+                <div class="admin-grid">
+                    <!-- Export Data Card -->
+                    <div class="festive-card admin-action-card">
+                        <div class="admin-card-icon gold"><i class="fa-solid fa-file-excel"></i></div>
+                        <h3>Export Complete Attendance Log</h3>
+                        <p>Generate and download an official CSV spreadsheet containing all 1,362 attendees, their admission status, exact entry timestamps, and volunteer station attribution.</p>
+                        <button class="primary-btn glow-btn" onclick="exportAttendanceCSV()">
+                            <i class="fa-solid fa-download"></i> Download Attendance CSV
+                        </button>
+                    </div>
+
+                    <!-- Change Admin Password Card -->
+                    <div class="festive-card admin-action-card">
+                        <div class="admin-card-icon purple"><i class="fa-solid fa-key"></i></div>
+                        <h3>Change Administrator Password</h3>
+                        <p>Update master credentials for <strong>rccindia@webworksstudios.com</strong>.</p>
+                        <form id="changePasswordForm" onsubmit="handleChangePassword(event)">
+                            <div class="input-block">
+                                <label><i class="fa-solid fa-lock"></i> Current Password</label>
+                                <input type="password" id="currentPassInput" class="custom-input" placeholder="Current password" required>
+                            </div>
+                            <div class="input-block">
+                                <label><i class="fa-solid fa-shield-halved"></i> New Password</label>
+                                <input type="password" id="newPassInput" class="custom-input" placeholder="New password (min 6 chars)" required>
+                            </div>
+                            <div id="changePassFeedback" class="login-feedback hidden"></div>
+                            <button type="submit" class="secondary-btn">
+                                <i class="fa-solid fa-check"></i> Update Password
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Reset Attendance Safety Zone -->
+                    <div class="festive-card admin-action-card danger-zone">
+                        <div class="admin-card-icon red"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        <h3>Reset All Event Entries</h3>
+                        <p>Reverts all 1,362 attendee check-in records back to <strong>PENDING</strong> for event rehearsals or multi-day runs. An automated backup is created before resetting.</p>
+                        <div class="danger-box">
+                            <label><i class="fa-solid fa-lock"></i> Enter Master Password to Confirm Reset:</label>
+                            <input type="password" id="resetPassInput" class="custom-input" placeholder="Enter master password">
+                            <button class="danger-btn" onclick="handleResetEventEntries()">
+                                <i class="fa-solid fa-trash-arrow-up"></i> Confirm & Reset All Entries
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Global Floating Notification Toast -->
+    <div id="toastNotification" class="toast-popup hidden">
+        <div class="toast-icon" id="toastIcon"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="toast-message" id="toastMessage">Action completed successfully</div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
